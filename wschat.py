@@ -8,9 +8,14 @@ import re
 import random
 import string
 
+import ConfigParser
+
+config = ConfigParser.RawConfigParser()
+config.read('wsc.conf')
 clients = []
 messageQueue = []
 running = 1
+cfgOrigin = ''
 
 
 class ConsoleThread(threading.Thread):
@@ -86,7 +91,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         print "Connection closed"
 
     def check_origin(self, origin):
-        if origin == "http://parsiuk.net":
+        #if origin == "http://parsiuk.net":
+        if origin == cfgOrigin:
             return True
         else:
             return False
@@ -97,8 +103,10 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
+    port = config.getint('global', 'port')
+    cfgOrigin = config.get('global', 'origin')
     http_server = tornado.httpserver.HTTPServer(application)
-    http_server.listen(8080)
+    http_server.listen(port)
     consoleThread = ConsoleThread()
     consoleThread.start()
     tornado.ioloop.IOLoop.instance().start()
