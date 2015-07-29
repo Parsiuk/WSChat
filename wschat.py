@@ -91,12 +91,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         print "Connection closed"
 
     def check_origin(self, origin):
-        #if origin == "http://parsiuk.net":
         if origin == cfgOrigin:
             return True
         else:
             return False
-
 
 application = tornado.web.Application([
     (r'/ws', WSHandler),
